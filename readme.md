@@ -81,9 +81,45 @@ Without a valid identity:
 - **Context**: `dev-context`
 
 
-### 🔁 Access Flow
-```txt
-User → Certificate → Role → RoleBinding → Context → Namespace
+### 🔁 RBAC Access Flow
+
+```pgsql
++---------+
+|  User   |
++---------+
+     |
+     | 1. Authenticates using
+     |    Client Certificate
+     v
++-------------+
+| Certificate |
++-------------+
+     |
+     | 2. Mapped in kubeconfig as a user
+     v
++-------------+
+|   Context   |  ----->  (Cluster + User + Namespace)
++-------------+
+     |
+     | 3. Uses context to talk to cluster
+     v
++-------------+
+| Namespace   |
++-------------+
+     |
+     | 4. Authorization check via RBAC
+     v
++--------+      5. Permission granted through
+|  Role  | ------------------------------+
++--------+                               |
+                                         v
+                                 +----------------+
+                                 |  RoleBinding   |
+                                 +----------------+
+                                         |
+                                         v
+                                  User gets access
+                                  to namespace
 ```
 
 ### 📂 Project Structure
